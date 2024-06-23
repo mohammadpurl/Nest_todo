@@ -13,10 +13,18 @@ export class CreateTodoItemHandler implements ICommandHandler<CreateTodoItemComm
 
   async execute(command: CreateTodoItemCommand): Promise<void> {
     const { todoListId, title, description, priority } = command;
-    const todoItem = new this.todoItemRepository.todoItemModel({ todoList: todoListId, title, description, priority });
-    await this.todoItemRepository.create(todoItem);
+    
+    // Create a new todoItem
+    const todoItem = await this.todoItemRepository.create({
+      todoList: todoListId,
+      title,
+      description,
+      priority
+    });
+
+    // Retrieve todoList and update todoItems array
     const todoList = await this.todoListRepository.findById(todoListId);
-    todoList.todoItems.push(todoItem._id);
+    todoList.todoItems.push(todoItem); 
     await this.todoListRepository.update(todoListId, { todoItems: todoList.todoItems });
   }
 }

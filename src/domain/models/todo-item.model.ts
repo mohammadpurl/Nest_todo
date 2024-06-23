@@ -1,20 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Schema, Document, model } from 'mongoose';
 
-@Schema()
-export class TodoItem extends Document {
-  @Prop({ required: true })
-  todoList: string;
-
-  @Prop({ required: true })
+export interface TodoItem extends Document {
+  todoList: any;
   title: string;
-
-  @Prop()
   description: string;
-
-  @Prop({ required: true })
   priority: number;
 }
 
-export const TodoItemSchema = SchemaFactory.createForClass(TodoItem);
+const TodoItemSchema = new Schema<TodoItem>({
+  todoList: { type: Schema.Types.ObjectId, ref: 'TodoList', required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  priority: { type: Number, required: true },
+});
+
+export const TodoItemModel = model<TodoItem>('TodoItem', TodoItemSchema);
+
